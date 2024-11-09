@@ -12,6 +12,8 @@ class SysProtect;
 class Reconstruction;
 class Virscan;
 class TextShow;
+class subReconstruction;
+class ConstraintCode;
 class MainPane : public QWidget
 {
     Q_OBJECT
@@ -25,14 +27,14 @@ private:
     void InitTop();
     void InitCenter();
     void InitBottom();
-    void InitDNAINTRO();   // 修改 原名字为KillVirus
     void UpdateCtrlState();
 
-    void ShowVirusKill();
-    void HideVirusKill();
+    // void InitDNAINTRO();   // 修改 原名字为KillVirus
+    // void ShowVirusKill();
+    // void HideVirusKill();
 
-    void ShowTools();
-    void HideTools();
+    // void ShowTools();
+    // void HideTools();
 
     void ShowChild(QWidget *child);
     void HideChild();
@@ -48,19 +50,22 @@ private:
     QWidget *m_pBottom;
 
     QPushButton *m_btnBack;
-
     QWidget *m_pVirusKill;
-    Tools *m_pTools;
     SysProtect *m_pSysProtect;
-    Reconstruction *m_pReconstruction;
-    Virscan *m_pVirscan;
-    TextShow *m_pTextShowBackGround;
-    TextShow *m_pTextShowStatus;
-    TextShow *m_pTextShowProgress;
-    TextShow *m_pTextShowConstraint;
+
+
+    Tools *m_pTools;                       /* 纠删码 */
+    Reconstruction *m_pReconstruction;    /* 删除重构 */
+    subReconstruction  *m_pSubReconstruction;  /* 替换重构  */
+    //subReconstruction    *m_pConstraintCode;      /* 约束编码 */
+    ConstraintCode    *m_pConstraintCode;      /* 约束编码 */
+
+    // TextShow *m_pTextShowBackGround;
+    // TextShow *m_pTextShowStatus;
+    // TextShow *m_pTextShowProgress;
+    // TextShow *m_pTextShowConstraint;
 
     QPixmap *m_pixFlash;
-
     bool m_bShowChild;
 };
 

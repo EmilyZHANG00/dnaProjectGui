@@ -17,6 +17,8 @@ public:
     ~Reconstruction();
 private:
     void InitCtrl();
+    bool isPositiveDecimal(const std::string& text) ;
+    bool isInteger(const std::string& text);
 private slots:
     void on_begin_slots();
     void on_flush_slots();

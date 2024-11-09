@@ -114,7 +114,7 @@ QWidget *CreateLineEditBoxItem(QString icon, QString title,QLineEdit *lineobj)
 
 Reconstruction::Reconstruction(QWidget *parent) : BaseChildPane(parent)
 {
-    m_strTitle = "序列重构";
+    m_strTitle = "删除重构";
     InitCtrl();
 }
 
@@ -203,13 +203,13 @@ void Reconstruction::InitCtrl()
 }
 
 
-bool isPositiveDecimal(const std::string& text) {
+bool Reconstruction::isPositiveDecimal(const std::string& text) {
     // 正则表达式：匹配大于0小于1的小数
     QRegularExpression regExp("^(0|[1-9]?\\d*)\\.[1-9]?\\d*$");
     return regExp.match(QString::fromStdString(text)).hasMatch();
 }
 
-bool isInteger(const std::string& text) {
+bool Reconstruction::isInteger(const std::string& text) {
     // 正则表达式：匹配整数
     QRegularExpression regExp("^[1-9]?\\d*$");
     return regExp.match(QString::fromStdString(text)).hasMatch();

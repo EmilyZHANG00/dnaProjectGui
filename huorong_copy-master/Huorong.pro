@@ -28,12 +28,14 @@ SOURCES += main.cpp\
     Reconstruction.cpp \
     SequenceReconstructionDialog.cpp \
     SequenceReconstructionForm.cpp \
+    configlist.cpp \
+    constraintcode.cpp \
         mainwnd.cpp \
+    subreconstruction.cpp \
     textshow.cpp \
     tools.cpp \
     basechildpane.cpp \
     sysprotect.cpp \
-    configlist.cpp \
     virscan.cpp \
     dynamicbtn.cpp \
     rrogress.cpp \
@@ -43,11 +45,13 @@ HEADERS  += mainwnd.h \
     Reconstruction.h \
     SequenceReconstructionDialog.h \
     SequenceReconstructionForm.h \
+    configlist.h \
+    constraintcode.h \
+    subreconstruction.h \
     textshow.h \
     tools.h \
     basechildpane.h \
     sysprotect.h \
-    configlist.h \
     virscan.h \
     dynamicbtn.h \
     rrogress.h \
@@ -85,6 +89,7 @@ DISTFILES += \
     ../build-Huorong-Desktop_Qt_6_5_3_MSVC2019_64bit-Release/bin/recognition/channel.py \
     ../build-Huorong-Desktop_Qt_6_5_3_MSVC2019_64bit-Release/bin/recognition/data_transfer.py \
     ../build-Huorong-Desktop_Qt_6_5_3_MSVC2019_64bit-Release/bin/recognition/del_reconstruction.py \
+    ../build-Huorong-Desktop_Qt_6_5_3_MSVC2019_64bit-Release/bin/subReconstruction.py \
     dnaEncodeIcon.ico \
     build/qt_6_5_3-Release/bin/ErrorCorrectionTest.py \
 

@@ -149,7 +149,7 @@ def imageTest_Reconstruction(image_path,type = 1):
     successRate = recons_success_rate(origin_acgt_seqs,recon_ACGT_seqs,Config.delimiterChar)
     print("序列重构成功率为:",successRate,"重构失败序列数目:",len(erase_list)," ,总序列数目:",len(origin_acgt_seqs))
 
-    output_image_dir =  os.path.join(os.path.dirname(image_path),"imageResult")
+    output_image_dir =  os.path.join(os.path.dirname(image_path),"ResimageResult")
     # 检查文件夹是否存在
     if not os.path.exists(output_image_dir):
         # 不存在则创建文件夹
@@ -235,7 +235,7 @@ def videoTest_Reconstruction(video_path,type = 1):
     k += 1 if (Artificial == True) else 0
     k += 1 if (VTCodeEncode == True) else 0
 
-    output_video_dir = os.path.join(os.path.dirname(video_path),"videoResult")
+    output_video_dir = os.path.join(os.path.dirname(video_path),"ResvideoResult")
     # 检查文件夹是否存在
     if not os.path.exists(output_video_dir):
         # 不存在则创建文件夹

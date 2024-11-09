@@ -240,8 +240,8 @@ void Tools::InitCtrl()
     layoutdrz->addLayout(layoutwbk);
 
     QGridLayout *layoutCfg = new QGridLayout();
-    layoutCfg->addWidget(CreateBoxLineEditItem(":/img/100/viruscan/icon_scan_completed.png", "碱基丢失率",baseLossRate), 0, 0, 1, 1);
-    layoutCfg->addWidget(CreateBoxLineEditItem(":/img/100/viruscan/icon_scan_completed.png", "RS冗余列个数", rsNumber), 0, 1, 1, 1);
+    layoutCfg->addWidget(CreateBoxLineEditItem(":/img/100/viruscan/icon_scan_completed.png", "碱基丢失率(默认为0.005)",baseLossRate), 0, 0, 1, 1);
+    layoutCfg->addWidget(CreateBoxLineEditItem(":/img/100/viruscan/icon_scan_completed.png", "RS冗余列个数(默认为60)", rsNumber), 0, 1, 1, 1);
 
 
     QPushButton *btn_begin = new QPushButton();

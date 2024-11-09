@@ -10,6 +10,9 @@
 #include "virscan.h"
 #include "textshow.h"
 #include "utils.h"
+#include "subreconstruction.h"
+#include "constraintcode.h"
+
 #include "QAbstractTransition"
 #include <QStateMachine>
 #include <QEventTransition>
@@ -71,18 +74,22 @@ MainPane::MainPane(QWidget *parent)
     m_pCenter = new QWidget(this);
     m_pBottom = new QWidget(this);
     m_pVirusKill = new QWidget(this);
-    m_pTools = new Tools(this);
+
 
     /* 参数1:显示文本内容   参数2:对应的图片 格式 QString("background-image: url(:/img/dnaMain.png)") */
-    m_pTextShowBackGround = new TextShow(this,QString("DNA存储研究背景介绍"),QString("background-image: url(:/img/dnaMain.png)"));
-    m_pTextShowStatus = new TextShow(this,QString("DNA存储研究现状"),QString("background-image: url(:/img/dnaMain.png)"));
-    m_pTextShowProgress = new TextShow(this,QString("DNA存储研究进度"),QString("background-image: url(:/img/dnaMain.png)"));
-    m_pTextShowConstraint = new TextShow(this,QString("DNA约束编码"),QString("background-image: url(:/img/dnaMain.png)"));
-    // m_pVirscan = new Virscan(this);
+    // m_pTextShowBackGround = new TextShow(this,QString("DNA存储研究背景介绍"),QString("background-image: url(:/img/dnaMain.png)"));
+    // m_pTextShowStatus = new TextShow(this,QString("DNA存储研究现状"),QString("background-image: url(:/img/dnaMain.png)"));
+    // m_pTextShowProgress = new TextShow(this,QString("DNA存储研究进度"),QString("background-image: url(:/img/dnaMain.png)"));
+    // m_pTextShowConstraint = new TextShow(this,QString("DNA约束编码"),QString("background-image: url(:/img/dnaMain.png)"));
+
+    m_pReconstruction = new Reconstruction(this);
+    m_pTools = new Tools(this);
+    m_pSubReconstruction = new subReconstruction(this);
+    //m_pConstraintCode = new subReconstruction(this);
+    m_pConstraintCode = new ConstraintCode(this);
 
 
     m_pSysProtect = new SysProtect(this);
-    m_pReconstruction = new Reconstruction(this);
     m_pixFlash = new QPixmap(":/img/100/ani_flash.png");
     m_bShowChild = false;
 
@@ -97,14 +104,20 @@ MainPane::MainPane(QWidget *parent)
                     "background-position: center;                    }");
 
 
-    m_pTools->hide();
-    m_pSysProtect->hide();
-    m_pReconstruction->hide();
-    m_pTextShowBackGround->hide();
-    m_pTextShowStatus->hide();
-    m_pTextShowProgress->hide();
-    m_pTextShowConstraint->hide();
+
+    // m_pTextShowBackGround->hide();
+    // m_pTextShowStatus->hide();
+    // m_pTextShowProgress->hide();
+    // m_pTextShowConstraint->hide();
     // m_pVirscan->hide();
+
+    m_pSysProtect->hide();
+
+    m_pTools->hide();
+    m_pReconstruction->hide();
+    m_pSubReconstruction->hide();
+    m_pConstraintCode->hide();
+
     InitCtrl();
 }
 
@@ -126,7 +139,7 @@ void MainPane::InitCtrl()
     InitTop();
     InitCenter();
     InitBottom();
-    InitDNAINTRO();
+    // InitDNAINTRO();
 }
 
 void MainPane::InitTop()
@@ -171,11 +184,6 @@ void MainPane::InitCenter()
 
     QLabel *labelTip1 = new QLabel(this);
     labelTip1->setAlignment(Qt::AlignRight);
-    //labelTip1->setText("<p style=\"color:#444444;font-size:15px;\"> 已保护 <span style=\"color:#ffa924;font-size:24px;\">100</span> 天</p>");
-
-    //QLabel *labelTip2 = new QLabel("版本: 5.0.73.1 病毒库: 2023-1-18 14:09", this);
-    //labelTip2->setAlignment(Qt::AlignRight);
-    //labelTip2->setStyleSheet("font-size: 12px; font-weight: 400; color: #444444");
 
     QVBoxLayout *tipLayout = new QVBoxLayout();
     tipLayout->setContentsMargins(0, 0, 0, 70);
@@ -235,20 +243,20 @@ void MainPane::InitBottom()
     mainLayout->setSpacing(110);
     mainLayout->addStretch();
 
-    QPushButton *btn = CreateBtn("算法简介", ":/img/100/virscan.png");
+    QPushButton *btn = CreateBtn("约束编码", ":/img/100/virscan.png");
     connect(btn, &QPushButton::clicked, [=]() {
-       ShowVirusKill();
+      ShowChild(m_pConstraintCode);
     });
     mainLayout->addWidget(btn);
 
-    QPushButton *btnSysProtect = CreateBtn("约束码", ":/img/100/sysprotect.png");
+    QPushButton *btnSysProtect = CreateBtn("替换重构", ":/img/100/sysprotect.png");
     mainLayout->addWidget(btnSysProtect);
     connect(btnSysProtect, &QPushButton::clicked, [=]() {
-       ShowChild(m_pTextShowConstraint);
+       ShowChild(m_pSubReconstruction);
     });
 
 
-    QPushButton *btnReconstruction = CreateBtn("序列重构", ":/img/100/kidsprotect.png");
+    QPushButton *btnReconstruction = CreateBtn("删除重构", ":/img/100/kidsprotect.png");
     mainLayout->addWidget(btnReconstruction);
     connect(btnReconstruction, &QPushButton::clicked, [=]() {
        ShowChild(m_pReconstruction);
@@ -260,64 +268,6 @@ void MainPane::InitBottom()
        ShowChild(m_pTools);
     });
     mainLayout->addStretch();
-}
-
-void MainPane::InitDNAINTRO()
-{
-    m_pVirusKill->hide();
-    m_pVirusKill->setFixedHeight(180);
-    m_pVirusKill->setObjectName("m_pVirusKill");
-    m_pVirusKill->setStyleSheet("QWidget#m_pVirusKill{background: #fff; background-image: url(:/img/100/viruscan/expand_bk.png); background-repeat: no-repeat; background-position: bottom}");
-
-    QHBoxLayout *mainLayout1 = new QHBoxLayout();
-    mainLayout1->setContentsMargins(0, 0, 0, 0);
-    mainLayout1->setSpacing(110);
-    mainLayout1->addStretch(1);
-
-    //  ShowChild(m_pVirscan) 分别进入到不同的界面
-    /*
-        m_pVirscan->hide();
-        m_pTextShowBackGround->hide();
-        m_pTextShowStatus->hide();
-        m_pTextShowProgress->hide();
-    */
-    QPushButton *btnBackGround = CreateBtn("研究背景", ":/img/100/viruscan/all.png");
-    mainLayout1->addWidget(btnBackGround);
-    connect(btnBackGround, &QPushButton::clicked, [=]() {
-       ShowChild(m_pTextShowBackGround);
-        HideVirusKill();
-    });
-    QPushButton *btnStatus = CreateBtn("研究现状", ":/img/100/viruscan/quick.png");
-    mainLayout1->addWidget(btnStatus);
-    connect(btnStatus, &QPushButton::clicked, [=]() {
-       ShowChild(m_pTextShowStatus);
-       HideVirusKill();
-    });
-    QPushButton *btnProgress = CreateBtn("研究进度", ":/img/100/viruscan/custom.png");
-    mainLayout1->addWidget(btnProgress);
-    connect(btnProgress, &QPushButton::clicked, [=]() {
-        ShowChild(m_pTextShowProgress);
-        HideVirusKill();
-    });
-    mainLayout1->addStretch(1);
-
-
-    QHBoxLayout *mainLayout2 = new QHBoxLayout();
-    mainLayout2->setContentsMargins(0, 0, 0, 0);
-    mainLayout2->addStretch(1);
-    QPushButton *btn = CreateMiniBtn("", ":/img/100/viruscan/expand.png", QSize(28, 28));
-    connect(btn, &QPushButton::clicked, [=]() {
-       HideVirusKill();
-    });
-    mainLayout2->addWidget(btn);
-    mainLayout2->addStretch(1);
-
-    QVBoxLayout *mainLayout = new QVBoxLayout(m_pVirusKill);
-    mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->addLayout(mainLayout1);
-    mainLayout->addStretch(1);
-    mainLayout->addLayout(mainLayout2);
 }
 
 void MainPane::UpdateCtrlState()
@@ -349,83 +299,101 @@ void MainPane::UpdateCtrlState()
     update();
 }
 
-void MainPane::ShowVirusKill()
-{
-    m_pVirusKill->show();
+/* 弹出框的内容  */
+// void MainPane::InitDNAINTRO()
+// {
+//     m_pVirusKill->hide();
+//     m_pVirusKill->setFixedHeight(180);
+//     m_pVirusKill->setObjectName("m_pVirusKill");
+//     m_pVirusKill->setStyleSheet("QWidget#m_pVirusKill{background: #fff; background-image: url(:/img/100/viruscan/expand_bk.png); background-repeat: no-repeat; background-position: bottom}");
 
-    QPoint point(0, height() - m_pVirusKill->height());
-    QPoint point2(0, height());
-    QRect rcStart, rcEnd;
-    rcEnd = QRect(point, QSize(width(), m_pVirusKill->height()));
-    rcStart = QRect(point2, QSize(width(), m_pVirusKill->height()));
+//     QHBoxLayout *mainLayout1 = new QHBoxLayout();
+//     mainLayout1->setContentsMargins(0, 0, 0, 0);
+//     mainLayout1->setSpacing(110);
+//     mainLayout1->addStretch(1);
 
-    QPropertyAnimation *animation = new QPropertyAnimation(m_pVirusKill, "geometry");
-    animation->setDuration(180);
-    animation->setStartValue(rcStart);
-    animation->setEndValue(rcEnd);
-    animation->start(QAbstractAnimation::DeleteWhenStopped);
+//     //  ShowChild(m_pVirscan) 分别进入到不同的界面
+//     /*
+//         m_pVirscan->hide();
+//         m_pTextShowBackGround->hide();
+//         m_pTextShowStatus->hide();
+//         m_pTextShowProgress->hide();
+//     */
+//     QPushButton *btnBackGround = CreateBtn("研究背景", ":/img/100/viruscan/all.png");
+//     mainLayout1->addWidget(btnBackGround);
+//     connect(btnBackGround, &QPushButton::clicked, [=]() {
+//        ShowChild(m_pTextShowBackGround);
+//         HideVirusKill();
+//     });
+//     QPushButton *btnStatus = CreateBtn("研究现状", ":/img/100/viruscan/quick.png");
+//     mainLayout1->addWidget(btnStatus);
+//     connect(btnStatus, &QPushButton::clicked, [=]() {
+//        ShowChild(m_pTextShowStatus);
+//        HideVirusKill();
+//     });
+//     QPushButton *btnProgress = CreateBtn("研究进度", ":/img/100/viruscan/custom.png");
+//     mainLayout1->addWidget(btnProgress);
+//     connect(btnProgress, &QPushButton::clicked, [=]() {
+//         ShowChild(m_pTextShowProgress);
+//         HideVirusKill();
+//     });
+//     mainLayout1->addStretch(1);
 
-    UpdateCtrlState();
-}
 
-void MainPane::HideVirusKill()
-{
-    QPoint point(0, height() - m_pVirusKill->height());
-    QPoint point2(0, height());
-    QRect rcStart, rcEnd;
-    rcStart = QRect(point, QSize(width(), m_pVirusKill->height()));
-    rcEnd = QRect(point2, QSize(width(), m_pVirusKill->height()));
+//     QHBoxLayout *mainLayout2 = new QHBoxLayout();
+//     mainLayout2->setContentsMargins(0, 0, 0, 0);
+//     mainLayout2->addStretch(1);
+//     QPushButton *btn = CreateMiniBtn("", ":/img/100/viruscan/expand.png", QSize(28, 28));
+//     connect(btn, &QPushButton::clicked, [=]() {
+//        HideVirusKill();
+//     });
+//     mainLayout2->addWidget(btn);
+//     mainLayout2->addStretch(1);
 
-    QPropertyAnimation *animation = new QPropertyAnimation(m_pVirusKill, "geometry");
-    connect(animation, &QPropertyAnimation::finished, [=]() {
-       m_pVirusKill->hide();
-    });
-    animation->setDuration(180);
-    animation->setStartValue(rcStart);
-    animation->setEndValue(rcEnd);
-    animation->start(QAbstractAnimation::DeleteWhenStopped);
-}
+//     QVBoxLayout *mainLayout = new QVBoxLayout(m_pVirusKill);
+//     mainLayout->setSpacing(0);
+//     mainLayout->setContentsMargins(0, 0, 0, 0);
+//     mainLayout->addLayout(mainLayout1);
+//     mainLayout->addStretch(1);
+//     mainLayout->addLayout(mainLayout2);
+// }
 
-void MainPane::ShowTools()
-{
-    m_pTools->show();
+// void MainPane::ShowVirusKill()
+// {
+//     m_pVirusKill->show();
 
-    QPoint point(0, 40);
-    QPoint point2(0, height());
-    QRect rcStart, rcEnd;
-    rcEnd = QRect(point, QSize(width(), height() - 40));
-    rcStart = QRect(point2, QSize(width(), 0));
+//     QPoint point(0, height() - m_pVirusKill->height());
+//     QPoint point2(0, height());
+//     QRect rcStart, rcEnd;
+//     rcEnd = QRect(point, QSize(width(), m_pVirusKill->height()));
+//     rcStart = QRect(point2, QSize(width(), m_pVirusKill->height()));
 
-    QPropertyAnimation *animation = new QPropertyAnimation(m_pTools, "geometry");
-    animation->setDuration(180);
-    animation->setStartValue(rcStart);
-    animation->setEndValue(rcEnd);
-    animation->start(QAbstractAnimation::DeleteWhenStopped);
+//     QPropertyAnimation *animation = new QPropertyAnimation(m_pVirusKill, "geometry");
+//     animation->setDuration(180);
+//     animation->setStartValue(rcStart);
+//     animation->setEndValue(rcEnd);
+//     animation->start(QAbstractAnimation::DeleteWhenStopped);
 
-    m_bShowChild = true;
-    UpdateCtrlState();
-}
+//     UpdateCtrlState();
+// }
 
-void MainPane::HideTools()
-{
-    QPoint point(0, 40);
-    QPoint point2(0, height());
-    QRect rcStart, rcEnd;
-    rcStart = QRect(point, QSize(width(), height() - 40));
-    rcEnd = QRect(point2, QSize(width(), 0));
+// void MainPane::HideVirusKill()
+// {
+//     QPoint point(0, height() - m_pVirusKill->height());
+//     QPoint point2(0, height());
+//     QRect rcStart, rcEnd;
+//     rcStart = QRect(point, QSize(width(), m_pVirusKill->height()));
+//     rcEnd = QRect(point2, QSize(width(), m_pVirusKill->height()));
 
-    QPropertyAnimation *animation = new QPropertyAnimation(m_pTools, "geometry");
-    connect(animation, &QPropertyAnimation::finished, [=]() {
-       m_pTools->hide();
-    });
-    animation->setDuration(180);
-    animation->setStartValue(rcStart);
-    animation->setEndValue(rcEnd);
-    animation->start(QAbstractAnimation::DeleteWhenStopped);
-
-    m_bShowChild = false;
-    UpdateCtrlState();
-}
+//     QPropertyAnimation *animation = new QPropertyAnimation(m_pVirusKill, "geometry");
+//     connect(animation, &QPropertyAnimation::finished, [=]() {
+//        m_pVirusKill->hide();
+//     });
+//     animation->setDuration(180);
+//     animation->setStartValue(rcStart);
+//     animation->setEndValue(rcEnd);
+//     animation->start(QAbstractAnimation::DeleteWhenStopped);
+// }
 
 void MainPane::ShowChild(QWidget *child)
 {
