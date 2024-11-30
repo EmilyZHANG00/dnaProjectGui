@@ -26,8 +26,10 @@ private slots:
 private:
     int m_add = 0;
 
-    QTextEdit *textRode = new QTextEdit();
-    QTextEdit *textShow = new QTextEdit();
+    QLineEdit *textRode = new QLineEdit();
+    // QTextEdit *textShow = new QTextEdit();
+    QLabel *SumRunTime = new QLabel();   // 整体时间
+    QLineEdit *savePath = new QLineEdit();   // 重构时间
 
     QLineEdit *errRadius = new QLineEdit();     // 半径
     QLineEdit *minDistance = new QLineEdit();   // 最小距离

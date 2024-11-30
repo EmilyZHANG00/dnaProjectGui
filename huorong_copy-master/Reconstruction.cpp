@@ -112,6 +112,45 @@ QWidget *CreateLineEditBoxItem(QString icon, QString title,QLineEdit *lineobj)
 }
 
 
+QWidget *CreateLabelBoxItem(QString icon, QString title,QLabel *lineobj)
+{
+    QPushButton *item = new QPushButton();
+    item->setStyleSheet("QPushButton{border-style:none;background: #fff; border: 0; }"
+                        "QPushButton:hover {background: #fffcf8; border: 1px solid #ffe7c1; }");
+    item->setFixedHeight(70);
+
+    QLabel *labelIcon = new QLabel();
+    QLabel *labelTitle = CreateCustomLabel(title, "#444444", 14);
+    labelIcon->setPixmap(QPixmap(icon));
+    //labelIcon->setFixedWidth(36);
+    labelIcon->setScaledContents(true);
+    labelIcon->setMinimumSize(36,36);
+    labelIcon->setMaximumSize(36,36);
+
+    QHBoxLayout *layoutTop = new QHBoxLayout();
+    layoutTop->addWidget(labelTitle);
+    layoutTop->addStretch(1);
+    //layoutTop->addWidget(checkBox);
+
+    QVBoxLayout *layoutRight = new QVBoxLayout();
+    layoutRight->addStretch(1);
+    layoutRight->addLayout(layoutTop);
+    layoutRight->addWidget(lineobj);
+
+    layoutRight->addStretch(1);
+    layoutRight->setSpacing(2);
+    layoutRight->setContentsMargins(10, 0, 0, 0);
+
+    QHBoxLayout *layoutMain = new QHBoxLayout(item);
+    layoutMain->addWidget(labelIcon);
+    layoutMain->addWidget(CreateSeparator(true));
+    layoutMain->addLayout(layoutRight);
+    layoutMain->setContentsMargins(10, 10, 10, 10);
+    layoutMain->setSpacing(10);
+
+    return item;
+}
+
 Reconstruction::Reconstruction(QWidget *parent) : BaseChildPane(parent)
 {
     m_strTitle = "删除重构";
@@ -121,8 +160,8 @@ Reconstruction::Reconstruction(QWidget *parent) : BaseChildPane(parent)
 void Reconstruction::InitCtrl()
 {
     QVBoxLayout *layoutTitle = new QVBoxLayout();
-    layoutTitle->addWidget(CreateCustomLabel("序列重构是DNA编码的重要研究方向"));
-    layoutTitle->setSpacing(10);
+    // layoutTitle->addWidget(CreateCustomLabel("序列重构是DNA编码的重要研究方向"));
+    // layoutTitle->setSpacing(10);
 
 
 
@@ -146,7 +185,7 @@ void Reconstruction::InitCtrl()
     layouttdr->addWidget(CreateCfgItem(":/img/100/sysprotect/virus/file.png", "请选择测试样本类型","1"));
     layouttdr->addWidget(CreateCfgItem(":/img/175/sysprotect/sys/appnetctrl.png", "请选择编码类型","2"));
 
-    QLabel *labelTitle = CreateCustomLabel("输入测试文本/路径", "#444444", 14);
+    QLabel *labelTitle = CreateCustomLabel("输入测试文本内容/图片路径/视频路径", "#444444", 14);
 
     QVBoxLayout *layoutwbk = new QVBoxLayout();
     layoutwbk->addWidget(labelTitle);
@@ -161,7 +200,7 @@ void Reconstruction::InitCtrl()
     layoutCfg->addWidget(CreateLineEditBoxItem(":/img/100/viruscan/icon_scan_completed.png", "碱基丢失率(默认值为0.005)",baseLossRate), 0, 0, 1, 1);
     // layoutCfg->addWidget(CreateLineEditBoxItem(":/img/100/viruscan/icon_scan_completed.png", "簇丢失率", clusterRate), 0, 1, 1, 1);
     layoutCfg->addWidget(CreateLineEditBoxItem(":/img/100/viruscan/icon_scan_completed.png", "平均簇大小(默认大小20)",clusterSize), 0, 1, 1, 1);
-    layoutCfg->addWidget(CreateLineEditBoxItem(":/img/100/viruscan/icon_scan_completed.png", "RS冗余列个数(默认大小30)", rsNumber), 1, 0, 1, 1);
+    layoutCfg->addWidget(CreateLineEditBoxItem(":/img/100/viruscan/icon_scan_completed.png", "RS冗余序列个数(默认大小40)", rsNumber), 1, 0, 1, 1);
 
 
     QPushButton *btn_begin = new QPushButton();
@@ -175,14 +214,21 @@ void Reconstruction::InitCtrl()
 
 
     QHBoxLayout *layoutShow = new QHBoxLayout();
-    layoutShow->addWidget(textShow);
+
+    QGridLayout *layoutShowGrid = new QGridLayout();
+    layoutShowGrid->addWidget(CreateLabelBoxItem(":/img/100/viruscan/icon_scan_time.png", "总耗时",SumRunTime), 0, 0, 1, 1);
+    layoutShowGrid->addWidget(CreateLabelBoxItem(":/img/100/viruscan/icon_scan_time.png", "序列重构耗时", ResRunTime), 0, 1, 1, 1);
+    layoutShowGrid->addWidget(CreateLabelBoxItem(":/img/100/viruscan/icon_scan_time.png", "序列数目",SeqCnt), 0, 2, 1, 1);
+    layoutShowGrid->addWidget(CreateLabelBoxItem(":/img/100/viruscan/icon_scan_time.png", "成功率", SucccessRate), 0, 3, 1, 1);
+    layoutShowGrid->addWidget(CreateLineEditBoxItem(":/img/100/viruscan/icon_scan_time.png", "文件保存路径", savePath),1, 0, 1, 4);
 
     QVBoxLayout *layoutbtn = new QVBoxLayout();
     layoutbtn->addWidget(btn_begin);
-    layoutbtn->addSpacerItem(new QSpacerItem(0,160,QSizePolicy::Fixed,QSizePolicy::Fixed));
+    // layoutbtn->addSpacerItem(new QSpacerItem(0,160,QSizePolicy::Fixed,QSizePolicy::Fixed));
     layoutbtn->addWidget(btn_flush);
 
-    layoutShow->addLayout(layoutbtn);
+    layoutShow->addLayout(layoutShowGrid,4);
+    layoutShow->addLayout(layoutbtn,1);
 
     //layoutBegin->addSpacerItem(new QSpacerItem(0,160,QSizePolicy::Expanding,QSizePolicy::Fixed));
     layoutShow->setContentsMargins(10, 0, 0, 0);
@@ -218,7 +264,6 @@ bool Reconstruction::isInteger(const std::string& text) {
 
 void Reconstruction::on_begin_slots()
 {
-    textShow->clear();
     //获取文件类型参数和基类型参数
     QComboBox *cbxInput = this->findChild<QComboBox *>("cbx_input");
     QComboBox *cbxEncodeType = this->findChild<QComboBox *>("cbx_encodeType");
@@ -276,11 +321,6 @@ void Reconstruction::on_begin_slots()
             QMessageBox::information(NULL, "提示", "请检查输入的路径后缀是否为图片");
             return;
         }
-        else
-        {
-            textShow->setText("正在执行图片文件的编解码，请耐心等候");
-            textShow->update();
-        }
     }
 
     if (fileType == 2)
@@ -290,17 +330,17 @@ void Reconstruction::on_begin_slots()
             QMessageBox::information(NULL, "提示", "请检查输入的路径后缀是否为视频");
             return;
         }
-        else
-        {
-            textShow->setText("正在执行视频文件的编解码，请耐心等候");
-            textShow->update();
-        }
     }
 
     //创建模块指针
     PyObject* pModule = PyImport_ImportModule("ReconstructionTest");
     if (!pModule)
+    {
+        PyErr_Print(); // print stack
+        qDebug() << "PyImport_ImportModule ReconstructionTest not found";
         qDebug()<<"获取模块指针失败";
+
+    }
 
 
     // 更新函数
@@ -336,65 +376,86 @@ void Reconstruction::on_begin_slots()
     PyArg_Parse(TextFuncBack,"s",&p);
     qDebug()<<"返回值: "<<p;
 
+
+    PyObject* pFunc = nullptr;
+    PyObject* pPara = PyTuple_New(2);
+
     if (fileType == 0) {
         qDebug()<<"文本数据测试"<<path.c_str();
-        //获取python文本函数
-        PyObject* pFuncText= PyObject_GetAttrString(pModule,"textTest_Reconstruction");
-        if(!pFuncText)
-            qDebug()<<"获取函数指针失败";
+        pFunc = PyObject_GetAttrString(pModule,"textTest_Reconstruction");
+        PyTuple_SetItem(pPara, 0, Py_BuildValue("s",path.c_str()));  //参数1为文本内容
+        PyTuple_SetItem(pPara, 1, Py_BuildValue("i",encodeType));  //参数2为int型
 
-        PyObject* pParaText = PyTuple_New(2);        // 2个参数
-        PyTuple_SetItem(pParaText, 0, Py_BuildValue("s",path.c_str()));  //参数1为文本内容
-        PyTuple_SetItem(pParaText, 1, Py_BuildValue("i",encodeType));  //参数2为int型
-
-        PyObject *TextFuncBack = PyObject_CallObject(pFuncText,pParaText);
-        std::string textString = "";
-        char *p=NULL;
-        PyArg_Parse(TextFuncBack,"s",&p);
-        //lineRode->setText(QString::number(res));
-        qDebug()<<"返回值: "<<p;
-        textShow->setText(QString::fromStdString(p));
     }
     else if(fileType == 1)
     {
         qDebug()<<"图片数据测试"<<path.c_str();
-        //获取python图片函数
-        PyObject* pFuncImage= PyObject_GetAttrString(pModule,"imageTest_Reconstruction");
-        if(!pFuncImage)
-            qDebug()<<"获取函数指针失败";
+        pFunc = PyObject_GetAttrString(pModule,"imageTest_Reconstruction");
+        PyTuple_SetItem(pPara, 0, Py_BuildValue("s",path.c_str()));  //参数1为QString型
+        PyTuple_SetItem(pPara, 1, Py_BuildValue("i",encodeType));  //参数1为int型
 
-        PyObject* pParaImage = PyTuple_New(2);        // 2个参数
-        PyTuple_SetItem(pParaImage, 0, Py_BuildValue("s",path.c_str()));  //参数1为QString型
-        PyTuple_SetItem(pParaImage, 1, Py_BuildValue("i",encodeType));  //参数1为int型
-        PyObject *ImageFuncBack = PyObject_CallObject(pFuncImage,pParaImage);
-        char *p=NULL;
-        PyArg_Parse(ImageFuncBack,"s",&p);
-        //lineRode->setText(QString::number(res));
-        qDebug()<<"返回值: "<<p;
-        textShow->setText(QString::fromStdString(p));
     }
-    else if(fileType == 2)
+    else
     {
-        //获取python视频函数
         qDebug()<<"视频数据测试";
+        pFunc= PyObject_GetAttrString(pModule,"videoTest_Reconstruction");
+        PyTuple_SetItem(pPara, 0, Py_BuildValue("s",path.c_str()));  //参数1为路径
+        PyTuple_SetItem(pPara, 1, Py_BuildValue("i",encodeType));  //参数1为int型
 
-        PyObject* pFunVcideo= PyObject_GetAttrString(pModule,"videoTest_Reconstruction");
-        if(!pFunVcideo)
-            qDebug()<<"获取函数指针失败";
-
-        PyObject* pParaVcideo = PyTuple_New(2);        // 2个参数
-        PyTuple_SetItem(pParaVcideo, 0, Py_BuildValue("s",path.c_str()));  //参数1为路径
-        PyTuple_SetItem(pParaVcideo, 1, Py_BuildValue("i",encodeType));  //参数1为int型
-
-        PyObject *VideoFuncBack = PyObject_CallObject(pFunVcideo,pParaVcideo);
-        char *p=NULL;
-        PyArg_Parse(VideoFuncBack,"s",&p);
-        //lineRode->setText(QString::number(res));
-        qDebug()<<"返回值: "<<p;
-        textShow->setText(QString::fromStdString(p));
     }
-}
+    if(!pFunc)
+        qDebug()<<"获取函数指针失败";
+    TextFuncBack =  PyObject_CallObject(pFunc,pPara);
 
+    /* 如果函数调用失败了 返回错误信息*/
+    if (TextFuncBack == NULL) {
+        PyObject *exc_type, *exc_value, *exc_traceback;
+        PyErr_Fetch(&exc_type, &exc_value, &exc_traceback);
+        PyErr_NormalizeException(&exc_type, &exc_value, &exc_traceback);
+        PyObject *exc_str = PyObject_Str(exc_value);
+        const char *exc_msg = PyUnicode_AsUTF8(exc_str);
+        fprintf(stderr, "[error]: %s\n", exc_msg);
+        Py_XDECREF(exc_type);
+        Py_XDECREF(exc_value);
+        Py_XDECREF(exc_traceback);
+        Py_XDECREF(exc_str);
+        return ;
+    }
+    else
+    {
+        qDebug()<<"函数成功返回";
+    }
+
+    /* 返回值类型为5长的字符串元组 */
+    if (PyTuple_Check(TextFuncBack) && PyTuple_Size(TextFuncBack) == 5) {
+        QLabel *labelArray[5]={SumRunTime,ResRunTime,SeqCnt,SucccessRate};
+        for(int i=0;i<4;i++)
+        {
+            PyObject *ResstrObj = PyTuple_GetItem(TextFuncBack, i);
+            if (PyUnicode_Check(ResstrObj)) {
+                QString _Resstr = QString::fromUtf8(PyUnicode_AsUTF8(ResstrObj));
+                labelArray[i]->setText(_Resstr);
+                qDebug() << "编码结果为：" << _Resstr;
+            } else {
+                qDebug() << "返回值不是字符串类型";
+            }
+        }
+
+        PyObject *ResstrObj = PyTuple_GetItem(TextFuncBack, 4);
+        if (PyUnicode_Check(ResstrObj)) {
+            QString _Resstr = QString::fromUtf8(PyUnicode_AsUTF8(ResstrObj));
+            savePath->setText(_Resstr);
+            qDebug() << "编码结果为：" << _Resstr;
+        } else {
+            qDebug() << "返回值不是字符串类型";
+        }
+    } else {
+        qDebug() << "返回值不是包含5个元素的元组";
+    }
+
+    // 清理Python对象
+    Py_DECREF(TextFuncBack);
+}
 
 
 
@@ -402,17 +463,19 @@ void Reconstruction::on_flush_slots()
 {
     //刷新界面的所有可编辑文本框
     textRode->setText("");
-    textShow->setText("");
     baseLossRate->setText("");
     rsNumber->setText("");
-    // clusterRate->setText("");
     clusterSize->setText("");
-
+    SumRunTime->setText("");
+    ResRunTime->setText("");
+    SeqCnt->setText("");
+    SucccessRate->setText("");
+    savePath->setText("");
 }
 
 
 Reconstruction::~Reconstruction()
 {
     //调用结束，销毁
-    Py_Finalize();
+    // Py_Finalize();
 }

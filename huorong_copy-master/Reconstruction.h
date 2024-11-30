@@ -26,12 +26,18 @@ private:
     int m_add = 0;
 
     QTextEdit *textRode = new QTextEdit();
-    QTextEdit *textShow = new QTextEdit();
 
     QLineEdit *baseLossRate = new QLineEdit();
     QLineEdit *rsNumber = new QLineEdit();
     QLineEdit *clusterRate = new QLineEdit();
     QLineEdit *clusterSize = new QLineEdit();
+
+
+    QLabel *SumRunTime = new QLabel();   // 整体时间
+    QLabel *ResRunTime = new QLabel();   // 重构时间
+    QLabel *SucccessRate = new QLabel();   // 成功率
+    QLabel *SeqCnt = new QLabel();   // 拆分成的序列数目
+    QLineEdit *savePath = new QLineEdit();   // 重构时间
 };
 
 #endif // RECONSTRUCTION_H

@@ -5,6 +5,58 @@
 
 #include "subReconstruction.h"
 
+
+QWidget *CreateFileItem(QString icon, QString title)
+{
+    QPushButton *item = new QPushButton();
+    item->setStyleSheet("QPushButton{border-style:none;background: #fff; border: 0; }"
+                        "QPushButton:hover {background: #fffcf8; border: 1px solid #ffe7c1; }");
+    item->setFixedHeight(70);
+
+    QLabel *labelIcon = new QLabel();
+    QLabel *labelTitle = CreateCustomLabel(title, "#444444", 14);
+    QCheckBox *checkBox = new QCheckBox();
+
+    QComboBox *comboXL = new QComboBox();
+    comboXL->addItem("文本",0);
+    comboXL->addItem("图片",1);
+    comboXL->setObjectName("cbx_file_type");
+
+    checkBox->setStyleSheet("QCheckBox::indicator{width: 32px; height: 32px; }"
+                            "QCheckBox::indicator:checked {border-image:url(:/img/100/switch-ON.png);}"
+                            "QCheckBox::indicator:unchecked {border-image:url(:/img/100/switch-OFF.png);}");
+    checkBox->setCursor(Qt::PointingHandCursor);
+
+    labelIcon->setPixmap(QPixmap(icon));
+    //labelIcon->setFixedWidth(36);
+    labelIcon->setScaledContents(true);
+    labelIcon->setMinimumSize(36,36);
+    labelIcon->setMaximumSize(36,36);
+
+    QHBoxLayout *layoutTop = new QHBoxLayout();
+    layoutTop->addWidget(labelTitle);
+    layoutTop->addStretch(1);
+    //layoutTop->addWidget(checkBox);
+
+    QVBoxLayout *layoutRight = new QVBoxLayout();
+    layoutRight->addStretch(1);
+    layoutRight->addLayout(layoutTop);
+
+    layoutRight->addWidget(comboXL);
+    layoutRight->addStretch(1);
+    layoutRight->setSpacing(2);
+    layoutRight->setContentsMargins(10, 0, 0, 0);
+
+    QHBoxLayout *layoutMain = new QHBoxLayout(item);
+    layoutMain->addWidget(labelIcon);
+    layoutMain->addWidget(CreateSeparator(true));
+    layoutMain->addLayout(layoutRight);
+    layoutMain->setContentsMargins(10, 10, 10, 10);
+    layoutMain->setSpacing(10);
+
+    return item;
+}
+
 QWidget *SubCreateLineEditBoxItem(QString icon, QString title,QLineEdit *lineobj)
 {
     QPushButton *item = new QPushButton();
@@ -45,6 +97,45 @@ QWidget *SubCreateLineEditBoxItem(QString icon, QString title,QLineEdit *lineobj
 }
 
 
+QWidget *SubCreateLabelBoxItem(QString icon, QString title,QLabel *lineobj)
+{
+    QPushButton *item = new QPushButton();
+    item->setStyleSheet("QPushButton{border-style:none;background: #fff; border: 0; }"
+                        "QPushButton:hover {background: #fffcf8; border: 1px solid #ffe7c1; }");
+    item->setFixedHeight(70);
+
+    QLabel *labelIcon = new QLabel();
+    QLabel *labelTitle = CreateCustomLabel(title, "#444444", 14);
+    labelIcon->setPixmap(QPixmap(icon));
+    //labelIcon->setFixedWidth(36);
+    labelIcon->setScaledContents(true);
+    labelIcon->setMinimumSize(36,36);
+    labelIcon->setMaximumSize(36,36);
+
+    QHBoxLayout *layoutTop = new QHBoxLayout();
+    layoutTop->addWidget(labelTitle);
+    layoutTop->addStretch(1);
+    //layoutTop->addWidget(checkBox);
+
+    QVBoxLayout *layoutRight = new QVBoxLayout();
+    layoutRight->addStretch(1);
+    layoutRight->addLayout(layoutTop);
+    layoutRight->addWidget(lineobj);
+
+    layoutRight->addStretch(1);
+    layoutRight->setSpacing(2);
+    layoutRight->setContentsMargins(10, 0, 0, 0);
+
+    QHBoxLayout *layoutMain = new QHBoxLayout(item);
+    layoutMain->addWidget(labelIcon);
+    layoutMain->addWidget(CreateSeparator(true));
+    layoutMain->addLayout(layoutRight);
+    layoutMain->setContentsMargins(10, 10, 10, 10);
+    layoutMain->setSpacing(10);
+
+    return item;
+}
+
 subReconstruction::subReconstruction(QWidget *parent) : BaseChildPane(parent)
 {
     m_strTitle = "替换重构";
@@ -54,14 +145,14 @@ subReconstruction::subReconstruction(QWidget *parent) : BaseChildPane(parent)
 void subReconstruction::InitCtrl()
 {
     QVBoxLayout *layoutTitle = new QVBoxLayout();
-    layoutTitle->addWidget(CreateCustomLabel("序列重构是DNA编码的重要研究方向"));
-    layoutTitle->setSpacing(10);
+    // layoutTitle->addWidget(CreateCustomLabel("序列重构是DNA编码的重要研究方向"));
+    // layoutTitle->setSpacing(10);
 
 
 
     QHBoxLayout *layoutTop = new QHBoxLayout();
     layoutTop->addLayout(layoutTitle);
-    layoutTop->addStretch(1);
+    // layoutTop->addStretch(1);
     //layoutTop->addLayout(layoutTopBtn);
 
 
@@ -75,17 +166,22 @@ void subReconstruction::InitCtrl()
     labelTitle3->setStyleSheet("border: 3px solid #c0a686; border-top-color: rgba(0,0,0,0); border-right-color: rgba(0,0,0,0); border-bottom-color: rgba(0,0,0,0); font-size: 14px");
 
     /*-----------------------------------------------------------------------*/
-    QVBoxLayout *layouttdr = new QVBoxLayout();
-    QLabel *labelTitle = CreateCustomLabel("输入测试文本/路径", "#444444", 14);
+    // QVBoxLayout *layoutBox1L = new QVBoxLayout();
+    // layoutBox1L->addWidget(CreateFileItem(":/img/175/sysprotect/sys/appnetctrl.png", "请选择编码类型"));
 
-    QVBoxLayout *layoutwbk = new QVBoxLayout();
-    layoutwbk->addWidget(labelTitle);
-    layoutwbk->addStretch(1);
-    layoutwbk->addWidget(textRode);
+    // QVBoxLayout *layoutBox1R = new QVBoxLayout();
+    // QLabel *labelTitle = CreateCustomLabel("输入文本路径/图片路径", "#444444", 14);
+    // layoutBox1R->addWidget(labelTitle);
+    // // layoutBox1R->addStretch(1);
+    // layoutBox1R->addWidget(textRode);
 
-    QHBoxLayout *layoutdrz = new QHBoxLayout();
-    layoutdrz->addLayout(layouttdr);
-    layoutdrz->addLayout(layoutwbk);
+    // QHBoxLayout *layoutBox1 = new QHBoxLayout();
+    // layoutBox1->addLayout(layoutBox1L);
+    // layoutBox1->addLayout(layoutBox1R);
+
+    QHBoxLayout *layoutBox1 = new QHBoxLayout();
+    layoutBox1->addWidget(CreateFileItem(":/img/175/sysprotect/sys/appnetctrl.png", "请选择编码类型"),1);
+    layoutBox1->addWidget(SubCreateLineEditBoxItem(":/img/100/viruscan/icon_scan_completed.png", "文本路径/图片路径",textRode),4);
 
     QGridLayout *layoutCfg = new QGridLayout();
     layoutCfg->addWidget(SubCreateLineEditBoxItem(":/img/100/viruscan/icon_scan_completed.png", "码的最小距离",minDistance), 0, 0, 1, 1);
@@ -103,31 +199,40 @@ void subReconstruction::InitCtrl()
 
 
 
+
     QHBoxLayout *layoutShow = new QHBoxLayout();
-    layoutShow->addWidget(textShow);
+
+    QGridLayout *layoutShowGrid = new QGridLayout();
+    layoutShowGrid->addWidget(SubCreateLabelBoxItem(":/img/100/viruscan/icon_scan_time.png", "总耗时",SumRunTime), 0, 0, 1, 1);
+    layoutShowGrid->addWidget(SubCreateLineEditBoxItem(":/img/100/viruscan/icon_scan_time.png", "文件保存路径", savePath),1, 0, 1, 1);
 
     QVBoxLayout *layoutbtn = new QVBoxLayout();
     layoutbtn->addWidget(btn_begin);
-    layoutbtn->addSpacerItem(new QSpacerItem(0,160,QSizePolicy::Fixed,QSizePolicy::Fixed));
+    // layoutbtn->addSpacerItem(new QSpacerItem(0,160,QSizePolicy::Fixed,QSizePolicy::Fixed));
     layoutbtn->addWidget(btn_flush);
 
-    layoutShow->addLayout(layoutbtn);
-
-    //layoutBegin->addSpacerItem(new QSpacerItem(0,160,QSizePolicy::Expanding,QSizePolicy::Fixed));
-    layoutShow->setContentsMargins(10, 0, 0, 0);
+    layoutShow->addLayout(layoutShowGrid,4);
+    layoutShow->addLayout(layoutbtn,1);
 
 
     QVBoxLayout *layoutMain = new QVBoxLayout(this);
+    QLabel *placeholder1 = new QLabel();
+    QLabel *placeholder2 = new QLabel();
+
     layoutMain->addLayout(layoutTop);
     layoutMain->addWidget(CreateSeparator());
-    layoutMain->addWidget(labelTitle1);
-    layoutMain->addLayout(layoutdrz);
+    layoutMain->addWidget(placeholder1);
+
+    layoutMain->addWidget(labelTitle1); 
+    layoutMain->addLayout(layoutBox1);
+
     layoutMain->addWidget(labelTitle2);
     layoutMain->addLayout(layoutCfg);
+
     layoutMain->addWidget(labelTitle3);
     layoutMain->addLayout(layoutShow);
+    layoutMain->addWidget(placeholder2);
     layoutMain->setContentsMargins(40, 10, 40, 10);
-    layoutMain->setSpacing(10);
 }
 
 
@@ -146,11 +251,10 @@ bool subReconstruction::isInteger(const std::string& text) {
 
 void subReconstruction::on_begin_slots()
 {
-    textShow->clear();
     //获取文件类型参数和基类型参数
-    std::string path = textRode->toPlainText().toStdString();
+    std::string path = textRode->text().toStdString();
     qDebug()<<"文本内容:"<<path;
-    QString qPath = textRode->toPlainText();
+    QString qPath = textRode->text();
     QFile file(qPath);
 
     if(path == ""){
@@ -211,36 +315,95 @@ void subReconstruction::on_begin_slots()
 
 
     //执行函数
-    PyObject* pFuncText= PyObject_GetAttrString(pModule,"substitution_reconstruction");
+    // PyObject* pFuncText= PyObject_GetAttrString(pModule,"substitution_reconstruction");
+
+    PyObject* pFuncText=nullptr;
+    QComboBox *cbxEncodeType = this->findChild<QComboBox *>("cbx_file_type");
+    int EncodeType = cbxEncodeType->currentIndex();
+    if(EncodeType==0)
+    {
+        if(!qPath.endsWith(".txt")){
+            QMessageBox::information(NULL, "提示", "请检查输入的路径后缀是否为txt");
+            return;
+        }
+        pFuncText = PyObject_GetAttrString(pModule,"text_reconstruction");
+    }
+    else
+    {
+        if(!qPath.endsWith(".jpg")){
+            QMessageBox::information(NULL, "提示", "请检查输入的路径后缀是否为jpg");
+            return;
+        }
+        pFuncText= PyObject_GetAttrString(pModule,"image_reconstruction");
+    }
+
+
     if(!pFuncText)
         qDebug()<<"获取函数指针失败";
 
     PyObject* pParaText = PyTuple_New(4);        //4个参数
-
     PyTuple_SetItem(pParaText, 0, Py_BuildValue("s",path.c_str()));
     PyTuple_SetItem(pParaText, 1, Py_BuildValue("i",std::stoi(_minDis)));
     PyTuple_SetItem(pParaText, 2, Py_BuildValue("i",std::stoi(_errRadius)));
     PyTuple_SetItem(pParaText, 3, Py_BuildValue("i",std::stoi(_clustersize)));
-    PyObject *TextFuncBack = PyObject_CallObject(pFuncText,pParaText);
-    char *p=NULL;
-    PyArg_Parse(TextFuncBack,"s",&p);
-    qDebug()<<"返回值: "<<p;
-    textShow->setText(QString::fromStdString(p));
+    PyObject *    TextFuncBack =  PyObject_CallObject(pFuncText,pParaText);
+    if (TextFuncBack == NULL) {
+        PyObject *exc_type, *exc_value, *exc_traceback;
+        PyErr_Fetch(&exc_type, &exc_value, &exc_traceback);
+        PyErr_NormalizeException(&exc_type, &exc_value, &exc_traceback);
+        PyObject *exc_str = PyObject_Str(exc_value);
+        const char *exc_msg = PyUnicode_AsUTF8(exc_str);
+        fprintf(stderr, "[error]: %s\n", exc_msg);
+        Py_XDECREF(exc_type);
+        Py_XDECREF(exc_value);
+        Py_XDECREF(exc_traceback);
+        Py_XDECREF(exc_str);
+        return ;
+    }
+
+
+    /* 返回值类型为5长的字符串元组 */
+    if (PyTuple_Check(TextFuncBack) && PyTuple_Size(TextFuncBack) == 2) {
+        PyObject *ResstrObj = PyTuple_GetItem(TextFuncBack, 0);
+        if (PyUnicode_Check(ResstrObj)) {
+            QString _Resstr = QString::fromUtf8(PyUnicode_AsUTF8(ResstrObj));
+            SumRunTime->setText(_Resstr);
+            qDebug() << "编码结果为：" << _Resstr;
+        } else {
+            qDebug() << "返回值不是字符串类型";
+        }
+
+        ResstrObj = PyTuple_GetItem(TextFuncBack, 1);
+        if (PyUnicode_Check(ResstrObj)) {
+           QString _Resstr = QString::fromUtf8(PyUnicode_AsUTF8(ResstrObj));
+            savePath->setText(_Resstr);
+            qDebug() << "编码结果为：" << _Resstr;
+        } else {
+            qDebug() << "返回值不是字符串类型";
+        }
+    } else {
+        qDebug() << "返回值不是包含2个元素的元组";
+    }
+
+    // 清理Python对象
+    Py_DECREF(TextFuncBack);
 }
 
 void subReconstruction::on_flush_slots()
 {
     //刷新界面的所有可编辑文本框
     textRode->setText("");
-    textShow->setText("");
     errRadius->setText("");
     minDistance->setText("");
     clusterSize->setText("");
+
+    SumRunTime->setText("");
+    savePath->setText("");
 }
 
 
 subReconstruction::~subReconstruction()
 {
-    //调用结束，销毁
-    Py_Finalize();
+    // //调用结束，销毁
+    // Py_Finalize();
 }

@@ -1,4 +1,9 @@
-﻿#include "mainwnd.h"
+﻿#pragma push_macro("slots")
+#undef slots
+#include <Python.h>
+#pragma pop_macro("slots")
+
+#include "mainwnd.h"
 #include <QVariant>
 #include <QGraphicsDropShadowEffect>
 #include <QVBoxLayout>
@@ -7,9 +12,9 @@
 #include "tools.h"
 #include "sysprotect.h"
 #include "Reconstruction.h"
-#include "virscan.h"
-#include "textshow.h"
-#include "utils.h"
+// #include "virscan.h"
+// #include "textshow.h"
+// #include "utils.h"
 #include "subreconstruction.h"
 #include "constraintcode.h"
 
@@ -25,6 +30,29 @@
 MainWnd::MainWnd(QWidget *parent)
     : QDialog(parent)
 {
+    //Py_SetPythonHome(L"D:\\Anaconda");
+    //Python初始化  与exe文件的相对位置
+
+    Py_SetPythonHome(L"./PY38ENV");
+    Py_Initialize();
+
+    // 检查Python初始化是否成功
+    if (PyErr_Occurred()) {
+        PyErr_Print();
+        qDebug() << "Python初始化失败";
+    } else {
+        qDebug() << "Python初始化成功";
+    }
+    //导入sys模块设置模块地址
+    PyRun_SimpleString("import sys");
+    PyRun_SimpleString("sys.argv = ['python.py']");
+    //PyRun_SimpleString("sys.path.append('C:/Users/fairysc/AppData/Local/Programs/Python/Python313/')");//说明系统文件所在路径
+    // PyRun_SimpleString("sys.path.append('D:/xiangmu/huorong_copy/build-Huorong-Desktop_Qt_6_5_3_MSVC2019_64bit-Release/bin/PYModule')");
+
+    QString setSysPath = QString("sys.path.append('%1')").arg(QCoreApplication::applicationDirPath()+"/PYModule");
+    PyRun_SimpleString(setSysPath.toStdString().c_str());
+
+
     m_pMianPane = new MainPane(this);
 
 #ifdef Q_OS_WIN32
@@ -45,7 +73,7 @@ MainWnd::MainWnd(QWidget *parent)
 
 MainWnd::~MainWnd()
 {
-
+    Py_Finalize();
 }
 
 void MainWnd::paintEvent(QPaintEvent *event)
@@ -94,7 +122,8 @@ MainPane::MainPane(QWidget *parent)
     m_bShowChild = false;
 
     setAttribute(Qt::WA_StyledBackground);  // 禁止父窗口样式影响子控件样式
-    setFixedSize(1020, 690);
+    // setFixedSize(1020, 690);
+    setFixedSize(1220, 690);
 
     setStyleSheet("MainPane{"
                   "background: #fff;"
